@@ -30,6 +30,7 @@ class _PlugsState extends State<Plugs> {
     for(int i = 0; i < config.names.length; i++){
       usages.add(0);
       activated.add(false);
+      spotData.add([]);
     }
 
     updateValues();
@@ -46,6 +47,7 @@ class _PlugsState extends State<Plugs> {
   double zaehlerstand = 0;
   int zaehlerverbrauch = 0;
   int pvWattage = 0;
+  List<List<FlSpot>> spotData = [];
   late List<int> usages = [];
   late List<bool> activated = [];
 
@@ -69,10 +71,9 @@ class _PlugsState extends State<Plugs> {
     uri = Uri.parse("http://aiko929.duckdns.org:8080/get/info/${config.pvIP}");
     client.get(uri).then((response) {
       if(response.statusCode == 200){
-      
-      Map<String,dynamic> json = jsonDecode(response.body);
-      pvWattage = json["power"];
-      setMountedState();
+        Map<String,dynamic> json = jsonDecode(response.body);
+        pvWattage = json["power"];
+        setMountedState();
       }
     });
 
@@ -81,10 +82,11 @@ class _PlugsState extends State<Plugs> {
       client.get(uri).then((response) {
         if(response.statusCode == 200){
 
-        Map<String,dynamic> json = jsonDecode(response.body);
-        usages[i] = json["power"];
-        activated[i] = json["status"];
-        setMountedState();
+          Map<String,dynamic> json = jsonDecode(response.body);
+          usages[i] = json["power"];
+          activated[i] = json["status"];
+          setMountedState();
+
         }
       });
     }
@@ -158,9 +160,9 @@ class _PlugsState extends State<Plugs> {
               child: ExpansionTile(
                   title: Text(config.names.elementAt(index), style: title),
                   initiallyExpanded: false,
-                  children: [
-                    PlugExpandedInfo()
-                  ],
+                  onExpansionChanged: (value) {
+                    updateExpandedSpots(index);
+                  },
                   trailing: Wrap(
                     children: [
                       IconButton(
@@ -205,8 +207,28 @@ class _PlugsState extends State<Plugs> {
                               selected: true,
                               selectedColor: usages[index] > 0 ? Colors.orangeAccent : Colors.white10),
                     ],
-                  )
-                  ,
+                  ),
+                  children: [
+                    SizedBox(
+                      width: 1500,
+                      height: 400,
+                      child: LineChart(
+                        LineChartData(
+                          lineBarsData: [
+                            LineChartBarData(
+                              dotData: FlDotData(show: false),
+                              spots: spotData.elementAt(index),
+                              preventCurveOvershootingThreshold: 0,
+                            )
+                          ],
+                          minX: 0,
+                          maxX: 23.99,
+                          minY: 0,
+                          maxY: 500,
+                        )
+                      ),
+                    )
+                  ],
                 ),
             );
           },
@@ -282,26 +304,40 @@ class _PlugsState extends State<Plugs> {
   }
 
 
-}
+  void updateExpandedSpots(int index){
 
-class PlugExpandedInfo extends StatelessWidget {
-  const PlugExpandedInfo({
-    Key? key,
-  }) : super(key: key);
+    String name = config.ips.elementAt(index);
+    var client = http.Client();
+    var uri = Uri.parse("http://aiko929.duckdns.org:8080/get/day/$name");
 
-  @override
-  Widget build(BuildContext context) {
-    return LimitedBox(
-      maxHeight: 200,
-      child: ListView(
-        children: [
-          BarChart(
-            BarChartData(
-                
-            )
-          )
-        ],
-      ),
-    );
+    var response = client.get(uri);
+
+    List<FlSpot> flSpots = [];
+    List<dynamic> json;
+
+    response.then((response) {
+
+      if(response.statusCode == 200){
+
+        json = jsonDecode(response.body);
+
+        for(int i = 0; i < json.length; i++){
+          
+          double y = json[i][0].toDouble();
+          double x = double.parse(json[i][1]) + (double.parse(json[i][2])/60);
+
+          flSpots.add(
+            FlSpot(x, y)
+          );
+        }
+
+        spotData.insert(index, flSpots);
+        setMountedState();
+
+      }
+
+    });
+
   }
+
 }

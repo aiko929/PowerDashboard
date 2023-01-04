@@ -27,25 +27,27 @@ class _SettingsPageState extends State<SettingsPage> {
       box.put("nameConfig", 
         NameConfig(
           names: [
+            "Kühlschrank",
+            "Gefrierschrank",
             "Getränkekühler",
             "Holzhaus",
             "Wohnzimmer",
             "Aiko",
-            "Kühlschrank",
-            "Gefrierschrank",
+            "Timo",
             "Testgerät"
             ],
           ips: [
+            "192.168.178.126",
+            "192.168.178.125",
             "192.168.178.115",
             "192.168.178.114",
             "192.168.178.116",
             "192.168.178.128",
-            "192.168.178.126",
-            "192.168.178.125",
+            "192.168.178.113",
             "192.168.178.127"
             ],
-          zaehlerIP: "192.168.178.118",
-          pvIP: "192.168.178.113"
+          zaehlerIP: "192.168.178.132",
+          pvIP: "pv"
           )
       );
     }

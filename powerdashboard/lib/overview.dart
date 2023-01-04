@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:tuple/tuple.dart';
 import 'package:http/http.dart' as http;
-import 'dart:math';
-import 'dart:convert';
 
 class OverView extends StatefulWidget {
   const OverView({Key? key}) : super(key: key);
@@ -21,8 +18,32 @@ class _OverViewState extends State<OverView> {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("Überarbeitung");
-
+    return SizedBox(
+      width: 500,
+      height: 500,
+      child: PieChart(
+        PieChartData(
+          centerSpaceRadius: 0,
+          sections: [
+            PieChartSectionData(
+              value: 100,
+              radius: 150
+            ),
+            PieChartSectionData(
+              value: 100,
+              radius: 150
+            ),PieChartSectionData(
+              value: 100,
+              radius: 150
+            ),
+            PieChartSectionData(
+              value: 100,
+              radius: 150
+            ),
+          ]
+        )
+      ),
+    );
   }
 
 }

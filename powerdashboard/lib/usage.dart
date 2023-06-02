@@ -128,7 +128,7 @@ class _UsageState extends State<Usage> {
 
     String time = DateFormat("yyyy-MM-dd").format(currentPickedDate).toString();
     var client = http.Client();
-    var uri = Uri.parse("http://aiko929.duckdns.org:8080/get/zaehler/$time");
+    var uri = Uri.parse("http://127.0.0.1:6060/get/zaehler/$time");
 
     int yIndex = 0;
 

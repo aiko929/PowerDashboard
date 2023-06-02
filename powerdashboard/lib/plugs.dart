@@ -56,7 +56,7 @@ class _PlugsState extends State<Plugs> {
     var client = http.Client();
     
     //Update Zähler:
-    var uri = Uri.parse("http://aiko929.duckdns.org:8080/get/zaehler");
+    var uri = Uri.parse("http://127.0.0.1:6060/get/zaehler");
     client.get(uri).then((response) {
       if(response.statusCode == 200){
       
@@ -68,7 +68,7 @@ class _PlugsState extends State<Plugs> {
     });
 
     //Update PV-Anlage:
-    uri = Uri.parse("http://aiko929.duckdns.org:8080/get/info/${config.pvIP}");
+    uri = Uri.parse("http://127.0.0.1:6060/get/info/${config.pvIP}");
     client.get(uri).then((response) {
       if(response.statusCode == 200){
         Map<String,dynamic> json = jsonDecode(response.body);
@@ -78,7 +78,7 @@ class _PlugsState extends State<Plugs> {
     });
 
     for(int i = 0; i < config.names.length; i++){
-      uri = Uri.parse("http://aiko929.duckdns.org:8080/get/info/${config.ips[i]}");
+      uri = Uri.parse("http://127.0.0.1:6060/get/info/${config.ips[i]}");
       client.get(uri).then((response) {
         if(response.statusCode == 200){
 
@@ -298,7 +298,7 @@ class _PlugsState extends State<Plugs> {
 
   void togglePlug(String ip) async {
     var client = http.Client();
-    var uri = Uri.parse("http://aiko929.duckdns.org:8080/do/toggle/$ip");
+    var uri = Uri.parse("http://127.0.0.1:6060/do/toggle/$ip");
     await client.get(uri);
     updateValues();
   }
@@ -308,7 +308,7 @@ class _PlugsState extends State<Plugs> {
 
     String name = config.ips.elementAt(index);
     var client = http.Client();
-    var uri = Uri.parse("http://aiko929.duckdns.org:8080/get/day/$name");
+    var uri = Uri.parse("http://127.0.0.1:6060/get/day/$name");
 
     var response = client.get(uri);
 
